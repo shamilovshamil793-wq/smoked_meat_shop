@@ -1,7 +1,7 @@
-"""Админка: товары с инлайн-редактированием разновидностей и заказы."""
+"""Админка: товары с inline-разновидностями, заказы с inline-позициями."""
 from django.contrib import admin
 
-from .models import Category, Product, ProductVariant, Order
+from .models import Category, Order, OrderItem, Product, ProductVariant
 
 
 @admin.register(Category)
@@ -12,7 +12,6 @@ class CategoryAdmin(admin.ModelAdmin):
 
 class ProductVariantInline(admin.TabularInline):
     """Разновидности (вес/цена/остаток) редактируются прямо в карточке товара."""
-
     model = ProductVariant
     extra = 1
     fields = ('title', 'price', 'stock')
@@ -27,6 +26,13 @@ class ProductAdmin(admin.ModelAdmin):
     inlines = [ProductVariantInline]
 
 
+class OrderItemInline(admin.TabularInline):
+    """Позиции заказа видны прямо в карточке заказа."""
+    model = OrderItem
+    extra = 0
+    fields = ('product', 'variant', 'quantity', 'price')
+
+
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('id', 'customer_name', 'phone', 'contact_method',
@@ -34,6 +40,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status', 'contact_method', 'created_at')
     search_fields = ('customer_name', 'phone')
     readonly_fields = ('created_at', 'items_summary')
+    inlines = [OrderItemInline]
     fieldsets = (
         ('Клиент', {'fields': ('customer_name', 'phone', 'contact_method')}),
         ('Заказ', {'fields': ('items_summary', 'total_price', 'status')}),

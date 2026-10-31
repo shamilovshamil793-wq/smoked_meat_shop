@@ -1,13 +1,11 @@
 """Представления: главная, страница товара, оформление заказа."""
-from decimal import Decimal
-
 from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
-from .models import Category, Order, Product, ProductVariant
+from .models import Category, Order, OrderItem, Product, ProductVariant
 from .vk_notify import send_order_to_vk
 
 
@@ -35,9 +33,10 @@ def product_detail(request, slug):
 def place_order(request, slug):
     """
     Обработка формы заказа:
-    - валидирует variant_id (с проверкой, что разновидность принадлежит этому товару);
-    - создаёт Order;
-    - вызывает отправку в VK.
+    - валидирует variant_id (что разновидность принадлежит этому товару);
+    - создаёт Order и OrderItem;
+    - списывает количество со склада;
+    - вызывает отправку уведомления в VK.
     """
     product = get_object_or_404(Product, slug=slug, is_active=True)
 
@@ -71,15 +70,12 @@ def place_order(request, slug):
             messages.error(request, err)
         return redirect(product.get_absolute_url())
 
-        # Количество: 1..99, по умолчанию 1
+    # Количество: 1..99, по умолчанию 1
     try:
         quantity = int(request.POST.get('quantity', 1))
     except (TypeError, ValueError):
         quantity = 1
-    if quantity < 1:
-        quantity = 1
-    if quantity > 99:
-        quantity = 99
+    quantity = max(1, min(99, quantity))
 
     # Проверка наличия на складе
     if variant.stock < quantity:
@@ -92,7 +88,7 @@ def place_order(request, slug):
 
     total = variant.price * quantity
 
-    # Атомарно: создаём заказ и списываем со склада
+    # Атомарно: создаём заказ, позицию заказа и списываем со склада
     with transaction.atomic():
         variant.stock -= quantity
         variant.save(update_fields=['stock'])
@@ -106,7 +102,16 @@ def place_order(request, slug):
                 f'{product.name} — {variant.title} × {quantity} = {total} ₽'
             ),
         )
-    # Уведомление в ВК — вне транзакции, чтобы не откатывать заказ при ошибке API
+
+        OrderItem.objects.create(
+            order=order,
+            product=product,
+            variant=variant,
+            quantity=quantity,
+            price=variant.price,
+        )
+
+    # Уведомление в VK — вне транзакции: ошибка API не должна откатывать заказ
     send_order_to_vk(order)
 
     messages.success(
