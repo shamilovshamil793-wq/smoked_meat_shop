@@ -1,0 +1,353 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load l10n %}
+
+{% block title %}{{ product.name }} — Пряный кусок{% endblock %}
+
+{% block extra_head %}
+<style>
+    .detail-wrap { padding: 3rem 0 4rem; }
+
+    .breadcrumbs { font-size: .85rem; color: var(--muted); margin-bottom: 1rem; }
+    .breadcrumbs a { color: var(--muted); text-decoration: none; }
+    .breadcrumbs a:hover { color: var(--ember); }
+
+    .product-gallery {
+        border-radius: 20px; overflow: hidden;
+        border: 1px solid var(--border); background: var(--wood);
+        aspect-ratio: 4/3;
+    }
+    .product-gallery img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .product-gallery .placeholder {
+        width: 100%; height: 100%;
+        display: flex; align-items: center; justify-content: center;
+        color: var(--muted);
+        background: linear-gradient(180deg, #1a1410, #0e0b08);
+    }
+
+    .product-cat {
+        font-size: .75rem; letter-spacing: .18em;
+        text-transform: uppercase; color: var(--ember); margin-bottom: .5rem;
+    }
+    .product-title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: clamp(2rem, 4.5vw, 3.2rem);
+        line-height: 1; letter-spacing: .01em; margin-bottom: 1rem;
+    }
+    .product-desc {
+        color: var(--muted); line-height: 1.7; font-size: 1rem;
+        white-space: pre-line; margin-bottom: 2rem;
+    }
+
+    /* -------- разновидности -------- */
+    .variant-option {
+        display: flex; align-items: center; gap: 1rem;
+        padding: .9rem 1.1rem;
+        border: 1px solid var(--border); border-radius: 14px;
+        background: linear-gradient(180deg, var(--wood-2), var(--wood));
+        margin-bottom: .7rem; cursor: pointer; transition: .2s;
+        position: relative;
+    }
+    .variant-option:hover { border-color: rgba(255,122,26,.4); }
+    .variant-option.disabled { opacity: .5; cursor: not-allowed; }
+    .variant-option input[type="radio"] {
+        position: absolute; opacity: 0; pointer-events: none;
+    }
+    .variant-option .dot {
+        width: 18px; height: 18px; border-radius: 50%;
+        border: 2px solid var(--border);
+        flex-shrink: 0; transition: .2s;
+    }
+    .variant-option input[type="radio"]:checked ~ .dot {
+        border-color: var(--ember);
+        background: var(--ember);
+        box-shadow: 0 0 12px var(--ember-glow);
+    }
+    .variant-option input[type="radio"]:checked ~ .variant-info .variant-name {
+        color: var(--ember);
+    }
+    .variant-option input[type="radio"]:checked ~ .variant-price {
+        color: var(--ember);
+    }
+    .variant-info { flex: 1; }
+    .variant-name { font-weight: 600; transition: .2s; }
+    .variant-stock {
+        font-size: .8rem; color: var(--muted);
+        display: block; margin-top: .15rem;
+    }
+    .variant-stock.out { color: #ff5a5a; }
+    .variant-price {
+        font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem;
+        color: var(--text); line-height: 1; transition: .2s;
+    }
+
+    /* -------- количество -------- */
+    .quantity-box {
+        display: flex; align-items: center; justify-content: space-between;
+        padding: .85rem 1.1rem; margin-top: 1.2rem;
+        border: 1px solid var(--border); border-radius: 14px;
+        background: linear-gradient(180deg, var(--wood-2), var(--wood));
+    }
+    .quantity-label {
+        font-size: .82rem; letter-spacing: .14em;
+        text-transform: uppercase; color: var(--muted);
+    }
+    .quantity-control { display: flex; align-items: center; gap: .4rem; }
+    .qty-btn {
+        width: 38px; height: 38px; border-radius: 10px;
+        border: 1px solid var(--border); background: var(--wood);
+        color: var(--text); font-size: 1.3rem; line-height: 1;
+        cursor: pointer; transition: .2s;
+        display: flex; align-items: center; justify-content: center;
+        padding: 0;
+    }
+    .qty-btn:hover:not(:disabled) {
+        border-color: var(--ember); color: var(--ember);
+        background: rgba(255,122,26,.06);
+    }
+    .qty-btn:disabled { opacity: .35; cursor: not-allowed; }
+    #quantity {
+        width: 56px; text-align: center;
+        background: transparent; border: none;
+        color: var(--text);
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.7rem; line-height: 1; padding: 0;
+        -moz-appearance: textfield;
+    }
+    #quantity::-webkit-outer-spin-button,
+    #quantity::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+
+    /* -------- итого -------- */
+    .total-box {
+        display: flex; align-items: baseline; justify-content: space-between;
+        padding: 1.1rem 1.3rem; margin: 1.5rem 0;
+        border: 1px dashed rgba(255,122,26,.4);
+        border-radius: 14px; background: rgba(255,122,26,.05);
+    }
+    .total-label { color: var(--muted); font-size: .95rem; }
+    .total-value {
+        font-family: 'Bebas Neue', sans-serif; font-size: 2rem;
+        color: var(--ember); line-height: 1;
+    }
+
+    /* -------- форма -------- */
+    .form-label-custom {
+        font-size: .82rem; letter-spacing: .14em;
+        text-transform: uppercase; color: var(--muted); margin-bottom: .4rem;
+    }
+    .form-control-custom {
+        width: 100%; background: var(--wood);
+        border: 1px solid var(--border); border-radius: 12px;
+        padding: .8rem 1rem; color: var(--text); font-size: .98rem;
+        transition: .2s;
+    }
+    .form-control-custom:focus {
+        outline: none; border-color: var(--ember);
+        box-shadow: 0 0 0 3px rgba(255,122,26,.15);
+    }
+    .form-control-custom::placeholder { color: #6d635c; }
+    select.form-control-custom {
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1l5 5 5-5' stroke='%239a8f85' stroke-width='1.6' fill='none' stroke-linecap='round'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        padding-right: 2.4rem;
+    }
+
+    .features-mini { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.5rem; }
+    .features-mini .tag {
+        font-size: .78rem; color: var(--muted);
+        padding: .35rem .75rem; border-radius: 999px;
+        border: 1px solid var(--border);
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="detail-wrap">
+    <div class="container">
+        <div class="breadcrumbs">
+            <a href="{% url 'shop:index' %}">Главная</a>
+            <span class="mx-1">/</span>
+            <span>{{ product.category.name }}</span>
+            <span class="mx-1">/</span>
+            <span class="text-light">{{ product.name }}</span>
+        </div>
+
+        <div class="row g-4 g-lg-5 align-items-start">
+
+            <!-- Фото -->
+            <div class="col-lg-6">
+                <div class="product-gallery">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                    {% else %}
+                    <div class="placeholder"><span>Фото скоро появится</span></div>
+                    {% endif %}
+                </div>
+                <div class="features-mini">
+                    <span class="tag">🔥 Цельные дрова</span>
+                    <span class="tag">⏳ Low &amp; Slow</span>
+                    <span class="tag">🌿 Без химии</span>
+                </div>
+            </div>
+
+            <!-- Инфо и форма -->
+            <div class="col-lg-6">
+                <p class="product-cat">{{ product.category.name }}</p>
+                <h1 class="product-title">{{ product.name }}</h1>
+                <p class="product-desc">{{ product.description }}</p>
+
+                {% if product.variants.all %}
+                <form method="post" action="{% url 'shop:place_order' product.slug %}" id="order-form">
+                    {% csrf_token %}
+
+                    <div class="mb-2 form-label-custom">Выберите разновидность</div>
+
+                    {% for v in product.variants.all %}
+                    <label class="variant-option {% if v.stock == 0 %}disabled{% endif %}">
+                        <input class="variant-radio" type="radio" name="variant_id"
+                               value="{{ v.id }}"
+                               data-price="{{ v.price|unlocalize }}"
+                               data-stock="{{ v.stock }}"
+                               {% if v.stock == 0 %}disabled{% endif %}
+                               {% if forloop.first and v.stock > 0 %}checked{% endif %}>
+                        <span class="dot"></span>
+                        <span class="variant-info">
+                            <span class="variant-name">{{ v.title }}</span>
+                            {% if v.stock == 0 %}
+                            <span class="variant-stock out">нет в наличии</span>
+                            {% else %}
+                            <span class="variant-stock">в наличии: {{ v.stock }}</span>
+                            {% endif %}
+                        </span>
+                        <span class="variant-price">{{ v.price }} ₽</span>
+                    </label>
+                    {% endfor %}
+
+                    <!-- КОЛИЧЕСТВО -->
+                    <div class="quantity-box">
+                        <span class="quantity-label">Количество порций</span>
+                        <div class="quantity-control">
+                            <button type="button" class="qty-btn" id="qty-minus" aria-label="Меньше">−</button>
+                            <input type="number" id="quantity" name="quantity"
+                                   value="1" min="1" max="99" readonly>
+                            <button type="button" class="qty-btn" id="qty-plus" aria-label="Больше">+</button>
+                        </div>
+                    </div>
+
+                    <!-- ИТОГО -->
+                    <div class="total-box">
+                        <span class="total-label">Итого</span>
+                        <span class="total-value" id="total-price">0 ₽</span>
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-label-custom">Имя</div>
+                            <input type="text" class="form-control-custom" name="name"
+                                   placeholder="Как к вам обращаться?" required>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-label-custom">Телефон</div>
+                            <input type="tel" class="form-control-custom" name="phone"
+                                   placeholder="+7 (___) ___-__-__" required>
+                        </div>
+                        <div class="col-12">
+                            <div class="form-label-custom">Способ связи</div>
+                            <select class="form-control-custom" name="contact_method">
+                                <option value="call">Позвоните мне</option>
+                                <option value="telegram">Напишите в Telegram</option>
+                                <option value="vk">Напишите во ВКонтакте</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-ember btn-lg w-100 mt-4">
+                        🔥 Заказать
+                    </button>
+                </form>
+
+                {% else %}
+                <div class="total-box">
+                    <span class="total-label">Цена</span>
+                    <span class="total-value">{{ product.base_price }} ₽</span>
+                </div>
+                <p class="muted small">Разновидности пока не добавлены. Скоро появятся.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+    var radios    = document.querySelectorAll('.variant-radio');
+    var qtyInput  = document.getElementById('quantity');
+    var minusBtn  = document.getElementById('qty-minus');
+    var plusBtn   = document.getElementById('qty-plus');
+    var totalEl   = document.getElementById('total-price');
+
+    if (!qtyInput || !totalEl || !minusBtn || !plusBtn) return;
+
+    function selected() {
+        return document.querySelector('.variant-radio:checked');
+    }
+    function price() {
+        var c = selected();
+        if (!c) return 0;
+        var raw = (c.dataset.price || '0').replace(/\s/g, '').replace(',', '.');
+        var n = parseFloat(raw);
+        return isNaN(n) ? 0 : n;
+    }
+    function stockLimit() {
+        var c = selected();
+        if (!c) return 1;
+        var s = parseInt(String(c.dataset.stock || '0').replace(/\D/g, ''), 10);
+        if (isNaN(s) || s <= 0) return 1;
+        return Math.min(99, s);
+    }
+    function qty() {
+        var v = parseInt(qtyInput.value, 10);
+        if (isNaN(v) || v < 1) v = 1;
+        return v;
+    }
+    function formatMoney(n) {
+        // "1590" -> "1 590" (пробел как разделитель тысяч)
+        return n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+    }
+    function recalc() {
+        var limit = stockLimit();
+        if (qty() > limit) qtyInput.value = limit;
+        qtyInput.max = limit;
+
+        var q = qty();
+        var total = price() * q;
+
+        totalEl.textContent = formatMoney(total) + ' ₽';
+        minusBtn.disabled = q <= 1;
+        plusBtn.disabled  = q >= limit;
+    }
+
+    radios.forEach(function (r) {
+        r.addEventListener('change', function () {
+            qtyInput.value = 1;
+            recalc();
+        });
+    });
+
+    minusBtn.addEventListener('click', function () {
+        if (qty() > 1) { qtyInput.value = qty() - 1; recalc(); }
+    });
+    plusBtn.addEventListener('click', function () {
+        var limit = stockLimit();
+        if (qty() < limit) { qtyInput.value = qty() + 1; recalc(); }
+    });
+
+    // Первый расчёт при загрузке
+    recalc();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,41 @@
+# === Python ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+
+# === Виртуальное окружение ===
+venv/
+env/
+.venv/
+
+# === Django ===
+*.log
+db.sqlite3
+db.sqlite3-journal
+/staticfiles/
+/media/
+
+# === Секреты и окружение ===
+.env
+.env.*
+!.env.example
+
+# === IDE ===
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# === ОС ===
+.DS_Store
+Thumbs.db
+
+# === Бэкапы и временное ===
+backups/
+*.bak
+*.tmp
