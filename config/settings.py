@@ -119,3 +119,71 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 VK_BOT_TOKEN = os.getenv('VK_BOT_TOKEN', '')
 VK_ADMIN_ID = int(os.getenv('VK_ADMIN_ID', '0'))
 VK_API_VERSION = '5.199'
+# ============================================================================
+#  PRODUCTION-НАСТРОЙКИ (активны только при DEBUG=False)
+# ============================================================================
+if not DEBUG:
+    # --- HTTPS и cookies ---
+    SECURE_SSL_REDIRECT = True            # все HTTP → HTTPS
+    SESSION_COOKIE_SECURE = True          # cookie сессии только по HTTPS
+    CSRF_COOKIE_SECURE = True             # CSRF-cookie только по HTTPS
+    SECURE_HSTS_SECONDS = 31536000        # HSTS на 1 год (только после успешного HTTPS!)
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+
+    # --- Защита от MIME-sniffing и clickjacking ---
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_BROWSER_XSS_FILTER = True      # устаревшее, но безвредно
+    X_FRAME_OPTIONS = 'DENY'
+
+    # --- Работа за nginx/прокси ---
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+    # --- Куда редиректить при ошибках ---
+    # (файлы 404.html / 500.html в templates/)
+    # CSRF_FAILURE_VIEW = 'django.views.csrf.csrf_failure'  # по умолчанию
+
+
+# ============================================================================
+#  ЛОГИРОВАНИЕ (и в dev, и в prod)
+# ============================================================================
+LOG_DIR = BASE_DIR / 'logs'
+LOG_DIR.mkdir(exist_ok=True)
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': '[{asctime}] {levelname} {name}: {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': LOG_DIR / 'shop.log',
+            'formatter': 'verbose',
+        },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose',
+        },
+    },
+    'loggers': {
+        # Ошибки VK-бота (logger в shop/vk_notify.py)
+        'shop': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+        # Логи Django (ошибки вьюх)
+        'django': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}
