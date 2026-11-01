@@ -39,7 +39,6 @@
         white-space: pre-line; margin-bottom: 2rem;
     }
 
-    /* -------- разновидности -------- */
     .variant-option {
         display: flex; align-items: center; gap: 1rem;
         padding: .9rem 1.1rem;
@@ -81,7 +80,6 @@
         color: var(--text); line-height: 1; transition: .2s;
     }
 
-    /* -------- количество -------- */
     .quantity-box {
         display: flex; align-items: center; justify-content: space-between;
         padding: .85rem 1.1rem; margin-top: 1.2rem;
@@ -117,7 +115,6 @@
     #quantity::-webkit-outer-spin-button,
     #quantity::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
 
-    /* -------- итого -------- */
     .total-box {
         display: flex; align-items: baseline; justify-content: space-between;
         padding: 1.1rem 1.3rem; margin: 1.5rem 0;
@@ -130,7 +127,6 @@
         color: var(--ember); line-height: 1;
     }
 
-    /* -------- форма -------- */
     .form-label-custom {
         font-size: .82rem; letter-spacing: .14em;
         text-transform: uppercase; color: var(--muted); margin-bottom: .4rem;
@@ -159,6 +155,61 @@
         font-size: .78rem; color: var(--muted);
         padding: .35rem .75rem; border-radius: 999px;
         border: 1px solid var(--border);
+    }
+
+    /* Информационные плашки */
+    .product-info-badges {
+        display: grid;
+        gap: .5rem;
+        margin: 1.2rem 0;
+    }
+    .info-badge {
+        display: flex;
+        align-items: flex-start;
+        gap: .7rem;
+        padding: .65rem .9rem;
+        border-radius: 10px;
+        background: rgba(255,122,26,.05);
+        border: 1px solid rgba(255,122,26,.18);
+        font-size: .88rem;
+        color: var(--muted);
+        line-height: 1.4;
+    }
+    .info-icon { font-size: 1.05rem; flex-shrink: 0; }
+
+    /* Sticky-панель мобильного */
+    .mobile-sticky-bar {
+        position: fixed;
+        left: 0; right: 0; bottom: 0;
+        z-index: 999;
+        background: rgba(14, 11, 8, .96);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-top: 1px solid var(--ember);
+        padding: .8rem 1rem calc(.8rem + env(safe-area-inset-bottom));
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+    }
+    .mobile-total { display: flex; flex-direction: column; }
+    .mobile-total-label {
+        font-size: .7rem;
+        text-transform: uppercase;
+        letter-spacing: .14em;
+        color: var(--muted);
+    }
+    .mobile-total-value {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 1.5rem;
+        color: var(--ember);
+        line-height: 1;
+    }
+
+    @media (max-width: 767.98px) {
+        .detail-wrap { padding: 1.5rem 0 100px; }
+        .product-title { font-size: 1.8rem; }
+        .total-value { font-size: 1.7rem; }
     }
 </style>
 {% endblock %}
@@ -242,6 +293,25 @@
                         <span class="total-value" id="total-price">0 ₽</span>
                     </div>
 
+                    <!-- ИНФОРМАЦИОННЫЕ ПЛАШКИ -->
+                    <div class="product-info-badges">
+                        <div class="info-badge">
+                            <span class="info-icon">💳</span>
+                            <span>Оплата при получении: наличными или СБП</span>
+                        </div>
+                        <div class="info-badge">
+                            <span class="info-icon">📞</span>
+                            <span>Подтверждаем заказ звонком в течение 2 часов</span>
+                        </div>
+                        <div class="info-badge">
+
+                        </div>
+                        <div class="info-badge">
+                            <span class="info-icon">🔥</span>
+                            <span>Свежее копчение — готовим под заказ, срок 1–3 дня</span>
+                        </div>
+                    </div>
+
                     <div class="row g-3">
                         <div class="col-md-6">
                             <div class="form-label-custom">Имя</div>
@@ -263,9 +333,19 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="btn btn-ember btn-lg w-100 mt-4">
+                    <!-- Кнопка для десктопа -->
+                    <button type="submit" class="btn btn-ember btn-lg w-100 mt-4 d-none d-md-block">
                         🔥 Заказать
                     </button>
+
+                    <!-- Sticky-панель для мобильного (внутри формы — кнопка отправляет её) -->
+                    <div class="mobile-sticky-bar d-md-none">
+                        <div class="mobile-total">
+                            <span class="mobile-total-label">Итого</span>
+                            <span class="mobile-total-value" id="total-price-mobile">0 ₽</span>
+                        </div>
+                        <button type="submit" class="btn btn-ember px-4">🔥 Заказать</button>
+                    </div>
                 </form>
 
                 {% else %}
@@ -289,6 +369,7 @@
     var minusBtn  = document.getElementById('qty-minus');
     var plusBtn   = document.getElementById('qty-plus');
     var totalEl   = document.getElementById('total-price');
+    var totalMobile = document.getElementById('total-price-mobile');
 
     if (!qtyInput || !totalEl || !minusBtn || !plusBtn) return;
 
@@ -309,45 +390,88 @@
         if (isNaN(s) || s <= 0) return 1;
         return Math.min(99, s);
     }
-    function qty() {
+        function qty() {
         var v = parseInt(qtyInput.value, 10);
         if (isNaN(v) || v < 1) v = 1;
         return v;
     }
+
     function formatMoney(n) {
-        // "1590" -> "1 590" (пробел как разделитель тысяч)
-        return n.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        var rounded = Math.round(n);
+        return rounded.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') + ' ₽';
     }
-    function recalc() {
-        var limit = stockLimit();
-        if (qty() > limit) qtyInput.value = limit;
-        qtyInput.max = limit;
 
-        var q = qty();
-        var total = price() * q;
-
-        totalEl.textContent = formatMoney(total) + ' ₽';
-        minusBtn.disabled = q <= 1;
-        plusBtn.disabled  = q >= limit;
+    function updateTotals() {
+        var formatted = formatMoney(price() * qty());
+        totalEl.textContent = formatted;
+        if (totalMobile) totalMobile.textContent = formatted;
     }
+
+    function updateQtyLimits() {
+        var max = stockLimit();
+        qtyInput.max = max;
+        if (qty() > max) qtyInput.value = max;
+        minusBtn.disabled = qty() <= 1;
+        plusBtn.disabled = qty() >= max;
+    }
+
+    function refresh() {
+        updateQtyLimits();
+        updateTotals();
+    }
+
+    minusBtn.addEventListener('click', function () {
+        if (qty() > 1) {
+            qtyInput.value = qty() - 1;
+            refresh();
+        }
+    });
+
+    plusBtn.addEventListener('click', function () {
+        if (qty() < stockLimit()) {
+            qtyInput.value = qty() + 1;
+            refresh();
+        }
+    });
 
     radios.forEach(function (r) {
         r.addEventListener('change', function () {
-            qtyInput.value = 1;
-            recalc();
+            qtyInput.value = 1; // сброс при смене варианта
+            refresh();
         });
     });
 
-    minusBtn.addEventListener('click', function () {
-        if (qty() > 1) { qtyInput.value = qty() - 1; recalc(); }
-    });
-    plusBtn.addEventListener('click', function () {
-        var limit = stockLimit();
-        if (qty() < limit) { qtyInput.value = qty() + 1; recalc(); }
-    });
+    // Инициализация
+    if (!selected()) {
+        qtyInput.value = 1;
+        qtyInput.disabled = true;
+        minusBtn.disabled = true;
+        plusBtn.disabled = true;
+        totalEl.textContent = '0 ₽';
+        if (totalMobile) totalMobile.textContent = '0 ₽';
+    } else {
+        refresh();
+    }
 
-    // Первый расчёт при загрузке
-    recalc();
+    // Валидация перед отправкой
+    var form = document.getElementById('order-form');
+    if (form) {
+        form.addEventListener('submit', function (e) {
+            var c = selected();
+            if (!c) {
+                e.preventDefault();
+                alert('Пожалуйста, выберите разновидность товара.');
+                return;
+            }
+            var available = parseInt(String(c.dataset.stock || '0').replace(/\D/g, ''), 10);
+            if (!isNaN(available) && qty() > available) {
+                e.preventDefault();
+                alert('Выбрано больше, чем есть в наличии. Доступно: ' + available + ' шт.');
+                qtyInput.value = available;
+                refresh();
+            }
+        });
+    }
 })();
 </script>
 {% endblock %}

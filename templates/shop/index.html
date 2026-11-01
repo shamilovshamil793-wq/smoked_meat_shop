@@ -5,7 +5,6 @@
 
 {% block extra_head %}
 <style>
-    /* HERO */
     .hero {
         position: relative;
         min-height: 82vh;
@@ -58,8 +57,10 @@
         margin-bottom: 2rem;
     }
 
-    /* ПРЕИМУЩЕСТВА */
-    .feature-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+    .feature-grid {
+        display: grid; gap: 1rem;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
     .feature {
         background: linear-gradient(180deg, var(--wood-2), var(--wood));
         border: 1px solid var(--border);
@@ -80,7 +81,6 @@
     .feature h5 { font-weight: 700; margin-bottom: .4rem; }
     .feature p { color: var(--muted); margin: 0; font-size: .95rem; line-height: 1.5; }
 
-    /* ТЕХНОЛОГИЯ */
     .tech-stat {
         text-align: center;
         background: linear-gradient(180deg, var(--wood-2), var(--wood));
@@ -103,7 +103,6 @@
         margin-top: .35rem;
     }
 
-    /* КАТАЛОГ */
     .product-card {
         display: block;
         text-decoration: none;
@@ -165,7 +164,18 @@
     }
     .chip:hover { color: var(--text); border-color: var(--ember); background: rgba(255,122,26,.06); }
 
-    /* CTA */
+    /* Доставка и оплата */
+    .delivery-notes {
+        background: linear-gradient(180deg, var(--wood-2), var(--wood));
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 1.2rem 1.5rem;
+        font-size: .95rem;
+        color: var(--muted);
+        line-height: 1.7;
+    }
+    .delivery-notes strong { color: var(--ember); }
+
     .cta {
         background:
             radial-gradient(circle at 30% 0%, rgba(255,122,26,.2), transparent 55%),
@@ -290,6 +300,48 @@
     {% else %}
     <p class="muted">Товары скоро появятся. Загляните позже.</p>
     {% endif %}
+</section>
+
+<!-- ДОСТАВКА И ОПЛАТА -->
+<section id="delivery" class="container py-5">
+    <div class="divider-ember mb-4"></div>
+    <h2 class="section-title mb-4">Доставка и оплата</h2>
+
+    <div class="row g-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="feature h-100">
+                <div class="feature-icon">💳</div>
+                <h5>Оплата при получении</h5>
+                <p>Наличными курьеру или переводом по СБП. Оплата — только после того, как вы получите и проверите заказ.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature h-100">
+                <div class="feature-icon">📞</div>
+                <h5>Подтверждение звонком</h5>
+                <p>Менеджер перезвонит в течение <strong>2 часов</strong> после оформления заказа, уточнит состав, время и адрес доставки.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature h-100">
+                <div class="feature-icon">🚚</div>
+                <h5>Доставка</h5>
+                <p>По Ставрополю и г.Михайловск— <strong>350 ₽</strong>. Бесплатно при заказе от <strong>3 000 ₽</strong>. Курьер привозит  заказ в бговорённые дни.</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="feature h-100">
+                <div class="feature-icon">🔥</div>
+                <h5>Свежее копчение</h5>
+                <p>Готовим строго под заказ — <strong>от 1 до 3 дней</strong> в зависимости от продукта. Не замораживаем, не храним на складе.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="delivery-notes mt-4">
+        <p class="mb-1"><strong>Сроки:</strong> голени, тушка — 1 день; рёбрышки, грудинка — 2 дня; рваная свинина — 2 дня.</p>
+        <p class="mb-1"><strong>Оплата:</strong> наличными при получении, переводом по СБП (номер телефона — при подтверждении заказа).</p>
+    </div>
 </section>
 
 <!-- CTA -->
