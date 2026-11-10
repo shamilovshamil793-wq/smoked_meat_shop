@@ -1,0 +1,13 @@
+venv/
+__pycache__/
+*.pyc
+.env
+.env.backup
+.git/
+.gitignore
+backups/
+logs/
+db_demo.sqlite3
+db.sqlite3
+docs/
+README.md
