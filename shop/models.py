@@ -126,7 +126,12 @@ class Order(models.Model):
         return f'Заказ №{self.pk} — {self.customer_name} ({self.total_price} ₽)'
 
 class OrderItem(models.Model):
-    """Позиция заказа: товар + разновидность + количество + цена на момент покупки."""
+    """Позиция заказа.
+
+    Важно: поле `price` хранит цену на момент оформления заказа —
+    это «снапшот» цены. Если владелец позже изменит цену товара,
+    история заказов останется корректной (клиент увидит ту сумму,
+    которую платил). Стандартная практика для интернет-магазинов."""
     order = models.ForeignKey(
         Order, on_delete=models.CASCADE,
         related_name='items', verbose_name='Заказ',

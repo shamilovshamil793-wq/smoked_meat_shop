@@ -5,58 +5,50 @@
 
 {% block extra_head %}
 <style>
-    .hero {
-        position: relative;
-        min-height: 82vh;
-        display: flex; align-items: center;
-        background:
-            radial-gradient(circle at 22% 18%, rgba(255,122,26,.35), transparent 42%),
-            radial-gradient(circle at 78% 82%, rgba(255,60,0,.18), transparent 45%),
-            linear-gradient(180deg, #1a0f07 0%, #0a0603 100%);
-        overflow: hidden;
-    }
-    .hero::after {
-        content: "";
-        position: absolute; inset: 0;
-        background-image:
-            radial-gradient(2px 2px at 20% 30%, rgba(255,140,60,.8), transparent),
-            radial-gradient(1px 1px at 40% 70%, rgba(255,90,20,.7), transparent),
-            radial-gradient(2px 2px at 70% 20%, rgba(255,180,100,.6), transparent),
-            radial-gradient(1px 1px at 85% 60%, rgba(255,120,40,.7), transparent);
-        background-size: 220px 220px;
-        opacity: .55;
-        pointer-events: none;
-    }
-    .hero > * { position: relative; z-index: 1; }
-
-    .hero-eyebrow {
-        display: inline-block;
-        font-size: .78rem;
-        letter-spacing: .22em;
-        text-transform: uppercase;
-        color: var(--ember);
-        border: 1px solid rgba(255,122,26,.4);
-        padding: .45rem .9rem;
-        border-radius: 999px;
-        background: rgba(255,122,26,.06);
-        margin-bottom: 1.4rem;
-    }
-    .hero-title {
-        font-family: 'Bebas Neue', sans-serif;
-        font-size: clamp(2.6rem, 6.5vw, 5rem);
-        line-height: .98;
-        letter-spacing: .01em;
-        margin-bottom: 1.4rem;
-    }
-    .hero-title .accent { color: var(--ember); display: block; }
-    .hero-sub {
-        font-size: clamp(1rem, 1.5vw, 1.15rem);
-        color: var(--muted);
-        max-width: 620px;
-        line-height: 1.6;
-        margin-bottom: 2rem;
+    /* ===== HERO-БАННЕР ===== */
+.hero-banner {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    background: var(--wood);
+}
+.hero-banner::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 220px;
+    pointer-events: none;
+    background: linear-gradient(
+        180deg,
+        transparent 0%,
+        rgba(14, 11, 8, 0.35) 40%,
+        rgba(14, 11, 8, 0.75) 75%,
+        var(--coal) 100%
+    );
+    z-index: 1;
+}
+    .hero-banner-img {
+        width: 100%;
+        aspect-ratio: 2.35 / 1;
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
     }
 
+    @media (max-width: 767.98px) {
+        .hero-banner-img {
+            aspect-ratio: 4 / 5;
+            background-position: center;
+        }
+        .hero-banner::after {
+        height: 140px;
+    }
+}
+
+
+    /* ===== Преимущества ===== */
     .feature-grid {
         display: grid; gap: 1rem;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -81,6 +73,90 @@
     .feature h5 { font-weight: 700; margin-bottom: .4rem; }
     .feature p { color: var(--muted); margin: 0; font-size: .95rem; line-height: 1.5; }
 
+    /* ===== ЧТО ТАКОЕ СМОКЕР ===== */
+    .smoker-block {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2.5rem;
+        align-items: start;
+    }
+    .smoker-photo {
+        position: relative;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 1px solid var(--border);
+        background: var(--wood);
+    }
+    .smoker-photo img {
+        width: 100%;
+        aspect-ratio: 4/3;
+        object-fit: cover;
+        display: block;
+    }
+    .smoker-placeholder {
+        width: 100%;
+        aspect-ratio: 4/3;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--muted);
+        background: linear-gradient(180deg, #1a1410, #0e0b08);
+        font-size: .9rem;
+    }
+    .smoker-photo-caption {
+        padding: .8rem 1rem;
+        font-size: .82rem;
+        color: var(--muted);
+        background: rgba(14,11,8,.9);
+        border-top: 1px solid var(--border);
+        line-height: 1.4;
+    }
+    .smoker-text p {
+        color: var(--muted);
+        line-height: 1.7;
+        margin-bottom: 1rem;
+    }
+    .smoker-text strong { color: var(--text); }
+
+    .smoker-compare {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+    .smoker-compare-col {
+        padding: 1.1rem 1.2rem;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+        background: linear-gradient(180deg, var(--wood-2), var(--wood));
+    }
+    .smoker-compare-col h6 {
+        font-weight: 700;
+        margin-bottom: .6rem;
+        font-size: .95rem;
+    }
+    .smoker-compare-col ul {
+        margin: 0;
+        padding-left: 1.1rem;
+        font-size: .9rem;
+        color: var(--muted);
+        line-height: 1.6;
+    }
+    .smoker-compare-col li { margin-bottom: .35rem; }
+    .smoker-bad { border-color: rgba(255, 90, 90, .25); }
+    .smoker-bad h6 { color: #ff7a7a; }
+    .smoker-good {
+        border-color: rgba(255,122,26,.35);
+        background: linear-gradient(180deg, rgba(255,122,26,.06), var(--wood));
+    }
+    .smoker-good h6 { color: var(--ember); }
+
+    @media (max-width: 767.98px) {
+        .smoker-block { grid-template-columns: 1fr; gap: 1.5rem; }
+        .smoker-compare { grid-template-columns: 1fr; }
+    }
+
+    /* ===== Технология ===== */
     .tech-stat {
         text-align: center;
         background: linear-gradient(180deg, var(--wood-2), var(--wood));
@@ -90,28 +166,20 @@
     }
     .tech-stat .num {
         font-family: 'Bebas Neue', sans-serif;
-        font-size: 2.4rem;
-        line-height: 1;
-        color: var(--ember);
-        letter-spacing: .02em;
+        font-size: 2.4rem; line-height: 1;
+        color: var(--ember); letter-spacing: .02em;
     }
     .tech-stat .label {
-        font-size: .8rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: .12em;
-        margin-top: .35rem;
+        font-size: .8rem; color: var(--muted);
+        text-transform: uppercase; letter-spacing: .12em; margin-top: .35rem;
     }
 
+    /* ===== Карточка товара ===== */
     .product-card {
-        display: block;
-        text-decoration: none;
-        color: inherit;
-        border-radius: var(--radius);
-        overflow: hidden;
+        display: block; text-decoration: none; color: inherit;
+        border-radius: var(--radius); overflow: hidden;
         background: linear-gradient(180deg, var(--wood-2), var(--wood));
-        border: 1px solid var(--border);
-        transition: .25s;
+        border: 1px solid var(--border); transition: .25s;
     }
     .product-card:hover {
         transform: translateY(-4px);
@@ -120,96 +188,59 @@
         color: inherit;
     }
     .product-thumb {
-        aspect-ratio: 4/3;
-        width: 100%;
-        object-fit: cover;
-        background: #1a1410;
-        display: block;
+        aspect-ratio: 4/3; width: 100%;
+        object-fit: cover; background: #1a1410; display: block;
     }
     .product-body { padding: 1.1rem 1.2rem 1.3rem; }
     .product-cat {
-        font-size: .72rem;
-        letter-spacing: .16em;
-        text-transform: uppercase;
-        color: var(--ember);
-        margin-bottom: .35rem;
+        font-size: .72rem; letter-spacing: .16em;
+        text-transform: uppercase; color: var(--ember); margin-bottom: .35rem;
     }
     .product-name {
-        font-weight: 700;
-        font-size: 1.08rem;
-        margin-bottom: .8rem;
-        color: var(--text);
-        line-height: 1.3;
+        font-weight: 700; font-size: 1.08rem;
+        margin-bottom: .8rem; color: var(--text); line-height: 1.3;
     }
-    .product-price {
-        display: flex; align-items: baseline; gap: .4rem;
-    }
+    .product-price { display: flex; align-items: baseline; gap: .4rem; }
     .product-price .amount {
         font-family: 'Bebas Neue', sans-serif;
-        font-size: 1.6rem;
-        color: var(--ember);
-        line-height: 1;
+        font-size: 1.6rem; color: var(--ember); line-height: 1;
     }
     .product-price .from { color: var(--muted); font-size: .82rem; }
 
     .chip {
-        display: inline-block;
-        padding: .45rem .95rem;
-        border-radius: 999px;
-        border: 1px solid var(--border);
-        color: var(--muted);
-        font-size: .85rem;
-        text-decoration: none;
-        transition: .2s;
+        display: inline-block; padding: .45rem .95rem;
+        border-radius: 999px; border: 1px solid var(--border);
+        color: var(--muted); font-size: .85rem;
+        text-decoration: none; transition: .2s;
     }
     .chip:hover { color: var(--text); border-color: var(--ember); background: rgba(255,122,26,.06); }
 
-    /* Доставка и оплата */
+    /* ===== Доставка и оплата ===== */
     .delivery-notes {
         background: linear-gradient(180deg, var(--wood-2), var(--wood));
-        border: 1px solid var(--border);
-        border-radius: 14px;
-        padding: 1.2rem 1.5rem;
-        font-size: .95rem;
-        color: var(--muted);
-        line-height: 1.7;
+        border: 1px solid var(--border); border-radius: 14px;
+        padding: 1.2rem 1.5rem; font-size: .95rem;
+        color: var(--muted); line-height: 1.7;
     }
     .delivery-notes strong { color: var(--ember); }
 
+    /* ===== CTA ===== */
     .cta {
         background:
             radial-gradient(circle at 30% 0%, rgba(255,122,26,.2), transparent 55%),
             linear-gradient(180deg, var(--wood-2), var(--wood));
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        padding: 3rem 2rem;
-        text-align: center;
+        border: 1px solid var(--border); border-radius: 22px;
+        padding: 3rem 2rem; text-align: center;
     }
 </style>
 {% endblock %}
 
 {% block content %}
 
-<!-- HERO -->
-<section class="hero">
-    <div class="container py-5">
-        <div class="col-lg-9">
-            <span class="hero-eyebrow">Дровяной смокер · Low &amp; Slow</span>
-            <h1 class="hero-title">
-                Настоящее копчение на дровах.
-                <span class="accent">Без щепы. Без компромиссов.</span>
-            </h1>
-            <p class="hero-sub">
-                Только цельные дубовые, ольховые и яблоневые поленья.
-                Живой огонь, натуральный дым и долгие часы терпения — так рождается вкус,
-                который не спутать ни с чем.
-            </p>
-            <div class="d-flex flex-wrap gap-3">
-                <a href="#catalog" class="btn btn-ember btn-lg px-4">Смотреть каталог</a>
-                <a href="#technology" class="btn btn-ghost btn-lg px-4">О технологии</a>
-            </div>
-        </div>
-    </div>
+<!-- HERO-БАННЕР -->
+<section class="hero-banner">
+    <div class="hero-banner-img"
+         style="background-image: url('{% static 'img/hero-banner.jpg' %}');"></div>
 </section>
 
 <!-- ПРЕИМУЩЕСТВА -->
@@ -229,6 +260,59 @@
             <div class="feature-icon">🌿</div>
             <h5>Без химии</h5>
             <p>Никакого «жидкого дыма», усилителей и ускорителей. Только огонь.</p>
+        </div>
+    </div>
+</section>
+
+<!-- ЧТО ТАКОЕ СМОКЕР -->
+<section class="container py-5">
+    <div class="divider-ember mb-4"></div>
+    <h2 class="section-title mb-4">Что такое смокер</h2>
+
+    <div class="smoker-block">
+        <div class="smoker-photo">
+            <img src="{% static 'img/smoker.jpg' %}" alt="Дровяной смокер «Пряный кусок»"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="smoker-placeholder" style="display:none;">Фото смокера скоро появится</div>
+            <div class="smoker-photo-caption">
+                Дровяной смокер «Пряный кусок» — работает только на цельных поленьях.
+            </div>
+        </div>
+
+        <div class="smoker-text">
+            <p>
+                <strong>Смокер</strong> — это специальная камера для медленного копчения
+                при низкой температуре <strong>(110°-130°C)</strong> на <strong>живом огне</strong> и <strong>цельных
+                дровах</strong>. В отличие от бытовой коптилки, где продукт «обрабатывают
+                дымом» 20–30 минут, в смокере мясо томится <strong>часами</strong> —
+                от 4 до 14, в зависимости от продукта.
+            </p>
+            <p>
+                Мы используем <strong>только дрова</strong>: дуб, ольху, яблоню.
+                Никакой щепы, опилок, прессованных брикетов и «жидкого дыма» —
+                только цельные поленья, живой огонь и терпение.
+            </p>
+
+            <div class="smoker-compare">
+                <div class="smoker-compare-col smoker-bad">
+                    <h6>❌ Обычная коптилка</h6>
+                    <ul>
+                        <li>Щепа и опилки</li>
+                        <li>20–40 минут</li>
+                        <li>«Жидкий дым» и ароматизаторы</li>
+                        <li>Поверхностный дымный запах</li>
+                    </ul>
+                </div>
+                <div class="smoker-compare-col smoker-good">
+                    <h6>✅ Дровяной смокер</h6>
+                    <ul>
+                        <li>Цельные поленья дуба, ольхи, яблони</li>
+                        <li>4–14 часов при низкой температуре 110°-130°C</li>
+                        <li>Только живой огонь и чистый дым</li>
+                        <li>Дым проникает в мясо, а не «в корку»</li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </div>
 </section>
@@ -326,21 +410,22 @@
             <div class="feature h-100">
                 <div class="feature-icon">🚚</div>
                 <h5>Доставка</h5>
-                <p>По Ставрополю и г.Михайловск— <strong>350 ₽</strong>. Бесплатно при заказе от <strong>3 000 ₽</strong>. Курьер привозит  заказ в бговорённые дни.</p>
+                <p>По Ставрополю и Михайловску — <strong>350 ₽</strong>. Бесплатно при заказе от <strong>3 000 ₽</strong>.</p>
             </div>
         </div>
         <div class="col-md-6 col-lg-3">
             <div class="feature h-100">
                 <div class="feature-icon">🔥</div>
                 <h5>Свежее копчение</h5>
-                <p>Готовим строго под заказ — <strong>от 1 до 3 дней</strong> в зависимости от продукта. Не замораживаем, не храним на складе.</p>
+                <p>Готовим строго под заказ — <strong>от 1 до 3 дней</strong> в зависимости от продукта.</p>
             </div>
         </div>
     </div>
 
     <div class="delivery-notes mt-4">
-        <p class="mb-1"><strong>Сроки:</strong> голени, тушка — 1 день; рёбрышки, грудинка — 2 дня; рваная свинина — 2 дня.</p>
-        <p class="mb-1"><strong>Оплата:</strong> наличными при получении, переводом по СБП (номер телефона — при подтверждении заказа).</p>
+        <p class="mb-1"><strong>Сроки:</strong> голени, тушка — 1 день; рёбрышки, грудинка — 1-2 дня; рваная свинина — 1-2 дня.</p>
+        <p class="mb-1"><strong>Оплата:</strong> наличными при получении, переводом по СБП.</p>
+        <p class="mb-0"><strong>Доставка:</strong> по Ставрополю/Михайловску — от 350 ₽, бесплатно от 3 000 ₽.</p>
     </div>
 </section>
 
