@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<title>Презентация — Пряный кусок</title>
+<style>
+    @page { size: 1280px 720px; margin: 0; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+        font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+        background: #0e0b08;
+        color: #ece6df;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    .slide {
+        width: 1280px;
+        height: 720px;
+        background: #0e0b08;
+        padding: 60px 80px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        position: relative;
+        page-break-after: always;
+        overflow: hidden;
+    }
+    .slide:last-child { page-break-after: auto; }
+
+    /* Декоративные угли на фоне */
+    .slide::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+            radial-gradient(circle at 15% 10%, rgba(255,122,26,.15), transparent 45%),
+            radial-gradient(circle at 85% 90%, rgba(255,60,0,.1), transparent 45%);
+        pointer-events: none;
+    }
+    .slide > * { position: relative; z-index: 1; }
+
+    h1 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 88px;
+        line-height: 1;
+        letter-spacing: 0.01em;
+        color: #ece6df;
+        margin-bottom: 32px;
+    }
+    h1 .accent { color: #ff7a1a; display: block; }
+
+    h2 {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 56px;
+        line-height: 1.05;
+        letter-spacing: 0.01em;
+        color: #ece6df;
+        margin-bottom: 40px;
+    }
+    h2 .accent { color: #ff7a1a; }
+
+    p, li {
+        font-size: 22px;
+        line-height: 1.5;
+        color: #b8aca3;
+    }
+    ul { list-style: none; padding: 0; }
+    ul li {
+        padding-left: 32px;
+        position: relative;
+        margin-bottom: 14px;
+    }
+    ul li::before {
+        content: "🔥";
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 20px;
+    }
+    strong { color: #ff7a1a; font-weight: 700; }
+
+    /* Титульный */
+    .title-slide {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .title-slide .logo {
+        width: 200px; height: 200px;
+        border-radius: 50%;
+        margin-bottom: 30px;
+        box-shadow: 0 0 40px rgba(255,122,26,.5);
+    }
+    .title-slide h1 {
+        font-size: 72px;
+        margin-bottom: 20px;
+    }
+    .title-slide .subtitle {
+        font-size: 24px;
+        color: #b8aca3;
+        margin-bottom: 48px;
+        max-width: 900px;
+        line-height: 1.4;
+    }
+    .title-slide .meta {
+        font-size: 18px;
+        color: #9a8f85;
+        line-height: 1.8;
+    }
+    .title-slide .meta strong { color: #ece6df; font-weight: 600; }
+
+    /* Слайд со скриншотом */
+    .slide-with-image {
+        justify-content: flex-start;
+        padding-top: 40px;
+    }
+    .slide-with-image h2 {
+        margin-bottom: 24px;
+        font-size: 44px;
+    }
+    .image-container {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        background: rgba(26,20,16,.5);
+        border: 1px solid #2e231a;
+        border-radius: 16px;
+        padding: 16px;
+    }
+    .image-container img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+        display: block;
+    }
+    .image-caption {
+        font-size: 16px;
+        color: #9a8f85;
+        text-align: center;
+        margin-top: 16px;
+        font-style: italic;
+    }
+
+    /* Слайд с двумя скриншотами */
+    .two-images {
+        display: flex;
+        gap: 20px;
+        flex: 1;
+    }
+    .two-images .image-container { flex: 1; }
+
+    /* Слайд «Технологии» */
+    .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 24px;
+        margin-top: 20px;
+    }
+    .tech-item {
+        background: linear-gradient(180deg, #241a12, #1b1410);
+        border: 1px solid #2e231a;
+        border-radius: 16px;
+        padding: 28px 32px;
+    }
+    .tech-item .label {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: #ff7a1a;
+        margin-bottom: 8px;
+    }
+    .tech-item .value {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 32px;
+        color: #ece6df;
+        line-height: 1.1;
+    }
+
+    /* Статистика */
+    .stats-row {
+        display: flex;
+        gap: 20px;
+        margin: 24px 0;
+    }
+    .stat {
+        flex: 1;
+        background: linear-gradient(180deg, #241a12, #1b1410);
+        border: 1px solid #2e231a;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+    }
+    .stat .num {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 56px;
+        color: #ff7a1a;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+    .stat .label {
+        font-size: 14px;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: #9a8f85;
+    }
+
+    /* Финальный слайд */
+    .final-slide {
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+    }
+    .final-slide h1 { font-size: 96px; }
+    .final-slide .logo {
+        width: 160px; height: 160px;
+        border-radius: 50%;
+        margin-bottom: 30px;
+        box-shadow: 0 0 40px rgba(255,122,26,.5);
+    }
+    .final-slide p {
+        font-size: 26px;
+        color: #b8aca3;
+        margin-top: 20px;
+    }
+
+    /* Номер слайда */
+    .slide-number {
+        position: absolute;
+        bottom: 24px;
+        right: 32px;
+        font-size: 14px;
+        color: #5c544d;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Шрифты (через Google Fonts — при печати подгрузится) */
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;500;600;700&display=swap');
+</style>
+</head>
+<body>
+
+<!-- СЛАЙД 1: ТИТУЛ -->
+<div class="slide title-slide">
+    <img src="static/img/logo.png" class="logo" alt="Пряный кусок">
+    <h1>ПРЯНЫЙ <span class="accent">КУСОК</span></h1>
+    <p class="subtitle">
+        Разработка веб-приложения для продажи копчёностей<br>
+        с интеграцией VK API
+    </p>
+    <p class="meta">
+        Студент: <strong>Шамилов Шамил</strong><br>
+        Группа: <strong>Python 52</strong><br>
+        Руководитель: <strong>Речицкий Александр Сергеевич</strong><br>
+        2026 г.
+    </p>
+    <span class="slide-number">1 / 13</span>
+</div>
+
+<!-- СЛАЙД 2: АКТУАЛЬНОСТЬ И ЦЕЛЬ -->
+<div class="slide">
+    <h2>Актуальность и <span class="accent">цель</span></h2>
+    <p style="margin-bottom:24px; font-size:20px; color:#ff7a1a; text-transform:uppercase; letter-spacing:0.15em;">Актуальность</p>
+    <ul style="margin-bottom:48px;">
+        <li>Рынок крафтовых копчёностей и фермерской продукции растёт</li>
+        <li>Малый бизнес уходит в онлайн — нужна простая витрина</li>
+        <li>Клиенту удобно заказать в 2 клика, продавцу — получить уведомление</li>
+    </ul>
+    <p style="margin-bottom:16px; font-size:20px; color:#ff7a1a; text-transform:uppercase; letter-spacing:0.15em;">Цель</p>
+    <p style="font-size:26px; color:#ece6df; line-height:1.4;">
+        Разработать веб-приложение для продажи копчёностей
+        с <strong>автоматическим уведомлением продавца</strong> через VK API.
+    </p>
+    <span class="slide-number">2 / 13</span>
+</div>
+
+<!-- СЛАЙД 3: ЗАДАЧИ -->
+<div class="slide">
+    <h2>Задачи <span class="accent">проекта</span></h2>
+    <ul>
+        <li>Анализ предметной области и конкурентов</li>
+        <li>Выбор технологического стека (Django, PostgreSQL, Bootstrap)</li>
+        <li>Проектирование базы данных (5 сущностей)</li>
+        <li>Реализация каталога, карточки товара и оформления заказа</li>
+        <li>Интеграция с VK API для уведомлений администратора</li>
+        <li>Тестирование (19 автотестов)</li>
+        <li>Подготовка к production-деплою (Docker, безопасность)</li>
+    </ul>
+    <span class="slide-number">3 / 13</span>
+</div>
+
+<!-- СЛАЙД 4: ТЕХНОЛОГИИ -->
+<div class="slide">
+    <h2>Стек <span class="accent">технологий</span></h2>
+    <div class="tech-grid">
+        <div class="tech-item">
+            <div class="label">Backend</div>
+            <div class="value">Python 3.12 · Django 6.1</div>
+        </div>
+        <div class="tech-item">
+            <div class="label">База данных</div>
+            <div class="value">PostgreSQL 16</div>
+        </div>
+        <div class="tech-item">
+            <div class="label">Frontend</div>
+            <div class="value">Bootstrap 5 · HTML · CSS · JS</div>
+        </div>
+        <div class="tech-item">
+            <div class="label">Интеграция</div>
+            <div class="value">VK API (messages.send)</div>
+        </div>
+        <div class="tech-item">
+            <div class="label">Docker</div>
+            <div class="value">python:3.12-slim · SQLite</div>
+        </div>
+        <div class="tech-item">
+            <div class="label">Тестирование</div>
+            <div class="value">Django TestCase · 19 тестов</div>
+        </div>
+    </div>
+    <span class="slide-number">4 / 13</span>
+</div>
+
+<!-- СЛАЙД 5: ER-ДИАГРАММА -->
+<div class="slide slide-with-image">
+    <h2>Модель данных — <span class="accent">ER-диаграмма</span></h2>
+    <div class="image-container">
+        <img src="docs/screenshots/12_er_diagram.png" alt="ER-диаграмма">
+    </div>
+    <p class="image-caption">
+        5 сущностей: Category → Product → ProductVariant, Order → OrderItem. Снапшот цены в OrderItem.
+    </p>
+    <span class="slide-number">5 / 13</span>
+</div>
+
+<!-- СЛАЙД 6: USE CASE -->
+<div class="slide slide-with-image">
+    <h2>Сценарии использования — <span class="accent">Use Case</span></h2>
+    <div class="image-container">
+        <img src="docs/screenshots/13_usecase.png" alt="Use Case-диаграмма">
+    </div>
+    <p class="image-caption">
+        3 актёра: Покупатель, Администратор, VK Bot. 11 сценариев.
+    </p>
+    <span class="slide-number">6 / 13</span>
+</div>
+
+<!-- СЛАЙД 7: ГЛАВНАЯ -->
+<div class="slide slide-with-image">
+    <h2>Главная страница — <span class="accent">витрина</span></h2>
+    <div class="image-container">
+        <img src="docs/screenshots/02_main.png" alt="Главная страница">
+    </div>
+    <p class="image-caption">
+        Hero-баннер · преимущества · блок «Что такое смокер» · каталог · доставка · адаптив.
+    </p>
+    <span class="slide-number">7 / 13</span>
+</div>
+
+<!-- СЛАЙД 8: КАРТОЧКА + ЗАКАЗ -->
+<div class="slide slide-with-image">
+    <h2>Карточка товара и <span class="accent">оформление заказа</span></h2>
+    <div class="two-images">
+        <div class="image-container">
+            <img src="docs/screenshots/05_product_detail.png" alt="Карточка товара">
+        </div>
+        <div class="image-container">
+            <img src="docs/screenshots/07_order_success.png" alt="Заказ принят">
+        </div>
+    </div>
+    <p class="image-caption">
+        Выбор веса и количества · динамический пересчёт цены · транзакция · списание со склада.
+    </p>
+    <span class="slide-number">8 / 13</span>
+</div>
+
+<!-- СЛАЙД 9: АДМИНКА -->
+<div class="slide slide-with-image">
+    <h2>Админ-панель — <span class="accent">управление магазином</span></h2>
+    <div class="two-images">
+        <div class="image-container">
+            <img src="docs/screenshots/08_admin_orders.png" alt="Админка: заказы">
+        </div>
+        <div class="image-container">
+            <img src="docs/screenshots/10_admin_product_inline.png" alt="Админка: товар с разновидностями">
+        </div>
+    </div>
+    <p class="image-caption">
+        Inline-редактирование разновидностей и позиций заказа · фильтры · поиск.
+    </p>
+    <span class="slide-number">9 / 13</span>
+</div>
+
+<!-- СЛАЙД 10: VK API -->
+<div class="slide slide-with-image">
+    <h2>Интеграция с <span class="accent">VK API</span></h2>
+    <div class="image-container">
+        <img src="docs/screenshots/01_tests_and_vk_log.png" alt="VK API и тесты">
+    </div>
+    <p class="image-caption">
+        При заказе — messages.send с random_id. Ошибка VK не откатывает заказ (try/except вне транзакции).
+    </p>
+    <span class="slide-number">10 / 13</span>
+</div>
+
+<!-- СЛАЙД 11: ТЕСТИРОВАНИЕ -->
+<div class="slide">
+    <h2>Тестирование — <span class="accent">19 автотестов</span></h2>
+    <div class="stats-row">
+        <div class="stat">
+            <div class="num">19</div>
+            <div class="label">автотестов</div>
+        </div>
+        <div class="stat">
+            <div class="num">OK</div>
+            <div class="label">все проходят</div>
+        </div>
+        <div class="stat">
+            <div class="num">7.8с</div>
+            <div class="label">время прогона</div>
+        </div>
+    </div>
+    <ul>
+        <li>Каталог и карточка товара — 5 тестов</li>
+        <li>Создание заказа и OrderItem — 4 теста</li>
+        <li>Валидация (поля, остатки, чужие variant_id) — 7 тестов</li>
+        <li>Админка (inline-позиции) — 3 теста</li>
+    </ul>
+    <span class="slide-number">11 / 13</span>
+</div>
+
+<!-- СЛАЙД 12: PRODUCTION-ГОТОВНОСТЬ -->
+<div class="slide">
+    <h2>Production-<span class="accent">готовность</span></h2>
+    <p style="font-size:20px; color:#ff7a1a; text-transform:uppercase; letter-spacing:0.15em; margin-bottom:16px;">Безопасность</p>
+    <ul style="margin-bottom:32px;">
+        <li>check --deploy — без предупреждений</li>
+        <li>HTTPS · Secure cookies · HSTS</li>
+        <li>Секреты в .env, не в репозитории</li>
+        <li>Кастомные страницы 404 / 500 в стиле сайта</li>
+    </ul>
+    <p style="font-size:20px; color:#ff7a1a; text-transform:uppercase; letter-spacing:0.15em; margin-bottom:16px;">Деплой</p>
+    <ul>
+        <li>Docker-образ (170 МБ) — запуск за 30 секунд</li>
+        <li>Автоматические миграции + демо-данные в контейнере</li>
+    </ul>
+    <span class="slide-number">12 / 13</span>
+</div>
+
+<!-- СЛАЙД 13: ФИНАЛ -->
+<div class="slide final-slide">
+    <img src="static/img/logo.png" class="logo" alt="Пряный кусок">
+    <h1>СПАСИБО <span class="accent">ЗА ВНИМАНИЕ</span></h1>
+    <p>Вопросы?</p>
+    <p style="font-size:18px; color:#5c544d; margin-top:40px;">
+        Демо: http://127.0.0.1:8000/ · Docker: smoked_meat_shop.tar
+    </p>
+    <span class="slide-number">13 / 13</span>
+</div>
+
+</body>
+</html>

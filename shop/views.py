@@ -50,6 +50,7 @@ def place_order(request, slug):
 
     variant_id = request.POST.get('variant_id')
     name = (request.POST.get('name') or '').strip()
+    address = (request.POST.get('address') or '').strip()
     phone = (request.POST.get('phone') or '').strip()
     contact_method = request.POST.get('contact_method', 'call')
 
@@ -60,6 +61,8 @@ def place_order(request, slug):
         errors.append('Укажите имя.')
     if not phone:
         errors.append('Укажите телефон.')
+    if not address:
+        errors.append('Укажите адрес доставки.')
 
     if variant_id:
 	# Обязательно фильтруем по product=product: клиент может
@@ -107,6 +110,7 @@ def place_order(request, slug):
         order = Order.objects.create(
             customer_name=name,
             phone=phone,
+            address=address,
             contact_method=contact_method,
             total_price=total,
             items_summary=(

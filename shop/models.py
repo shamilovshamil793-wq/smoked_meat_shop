@@ -85,7 +85,6 @@ class Order(models.Model):
     CONTACT_CHOICES = [
         ('call', 'Звонок'),
         ('telegram', 'Telegram'),
-        ('vk', 'ВКонтакте'),
     ]
 
     STATUS_CHOICES = [
@@ -100,6 +99,10 @@ class Order(models.Model):
     phone = models.CharField('Телефон', max_length=32)
     contact_method = models.CharField(
         'Способ связи', max_length=16, choices=CONTACT_CHOICES, default='call'
+    )
+    address = models.CharField(
+        'Адрес доставки', max_length=500,
+        help_text='Улица, дом, квартира, город',
     )
 
     # Сумма

@@ -42,6 +42,7 @@ class BaseSetUp(TestCase):
             'variant_id': self.variant.pk,
             'name': 'Иван Иванов',
             'phone': '+79990000000',
+            'address': 'г. Ставрополь, ул. Ленина, д. 1',
             'contact_method': 'call',
             'quantity': '1',
         }

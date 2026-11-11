@@ -32,6 +32,7 @@ def send_order_to_vk(order) -> bool:
         f'🔥 Новый заказ №{order.pk}!\n\n'
         f'👤 Имя: {order.customer_name}\n'
         f'📞 Телефон: {order.phone}\n'
+        f'📍 Адрес: {order.address}\n'
         f'💬 Связь: {order.get_contact_method_display()}\n'
         f'📦 Состав:\n{order.items_summary or "—"}\n'
         f'💰 Сумма: {order.total_price} ₽\n'
